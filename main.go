@@ -19,6 +19,7 @@ func main() {
 	fImei, _ := os.OpenFile("./"+fPrefix+"-imei.txt", os.O_RDWR|os.O_CREATE, 0766);
 	fAdid, _ := os.OpenFile("./"+fPrefix+"-androidid.txt", os.O_RDWR|os.O_CREATE, 0766);
 	fOaid, _ := os.OpenFile("./"+fPrefix+"-oaid.txt", os.O_RDWR|os.O_CREATE, 0766);
+	fMd5, _ := os.OpenFile("./"+fPrefix+"-md5.txt", os.O_RDWR|os.O_CREATE, 0766);
 
 	// 获取原始文件 /Users/yanbingti/Desktop/olduser-0115.txt
 	originFile := os.Args[1]
@@ -52,8 +53,14 @@ func main() {
 			_, _ = fAdid.WriteString(txt + "\n")
 		}
 
+		// 匹配md5
+		mMd5, _ := regexp.MatchString(`^[\w\d]{32}$`, txt)
+		if mMd5 {
+			_, _ = fMd5.WriteString(txt + "\n")
+		}
+
 		// 啥也不是放入oaid
-		if !mIdfa && !mImei && (mAdid2 && !mAdid1) {
+		if !mIdfa && !mImei && !(mAdid2 && !mAdid1) && !mMd5 {
 			_, _ = fOaid.WriteString(txt + "\n")
 		}
 	}
