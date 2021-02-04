@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"demo01/supports"
 	"io/ioutil"
 	"os"
 	"regexp"
@@ -12,7 +12,7 @@ import (
 func main() {
 
 	// 生成随机文件前缀
-	fPrefix := time.Now().Format("150405")
+	fPrefix := "dmp/" + time.Now().Format("150405") + "-chiyt"
 
 	// 打开文件流
 	fIdfa, _ := os.OpenFile("./"+fPrefix+"-idfa.txt", os.O_RDWR|os.O_CREATE, 0766);
@@ -30,9 +30,7 @@ func main() {
 	for _, txt := range originates {
 		// 显示进度条
 		lineI++
-		countFinish := NChars("#", lineI*100/lineLen)
-		countWait := NChars("-", 100-lineI*100/lineLen)
-		fmt.Print("\r", countFinish, countWait, ":", lineI, ":")
+		supports.PBar(lineI, lineLen)
 
 		// 匹配idfa
 		mIdfa, _ := regexp.MatchString(`^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$`, txt)
@@ -41,15 +39,14 @@ func main() {
 		}
 
 		// 匹配imei
-		mImei, _ := regexp.MatchString(`^[0-9]{15,16}$`, txt)
+		mImei, _ := regexp.MatchString(`^[0-9]{15}$`, txt)
 		if mImei {
 			_, _ = fImei.WriteString(txt + "\n")
 		}
 
 		// 匹配AndroidId - 至少包含
-		mAdid1, _ := regexp.MatchString(`^[\d]{16}$`, txt)
-		mAdid2, _ := regexp.MatchString(`^[\w\d]{16}$`, txt)
-		if mAdid2 && !mAdid1 {
+		mAdid, _ := regexp.MatchString(`^[\w\d]{16}$`, txt)
+		if mAdid {
 			_, _ = fAdid.WriteString(txt + "\n")
 		}
 
@@ -60,16 +57,8 @@ func main() {
 		}
 
 		// 啥也不是放入oaid
-		if !mIdfa && !mImei && !(mAdid2 && !mAdid1) && !mMd5 {
+		if !mIdfa && !mImei && !mAdid && !mMd5 {
 			_, _ = fOaid.WriteString(txt + "\n")
 		}
 	}
-}
-
-func NChars(b string, n int) string {
-	s := ""
-	for i := 0; i < n; i++ {
-		s += b
-	}
-	return s
 }
