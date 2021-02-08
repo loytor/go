@@ -1,8 +1,13 @@
 package supports
 
 import (
+	"bufio"
 	"fmt"
+	"io"
+	"os"
 	"regexp"
+	"strings"
+	"time"
 )
 
 // 生成指定数量的联系的字符串
@@ -32,4 +37,33 @@ func Midfa(s string) bool {
 
 func Moaid(s string) bool {
 	return s != "NULL" && s != ""
+}
+
+func ReadFile(filePath string, handle func(string)) error {
+	f, err := os.Open(filePath)
+	defer f.Close() // 延时处理
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	// 读取buf
+	buf := bufio.NewReader(f)
+
+	// 循环处理
+	i := 1
+	for {
+		if i%1000 == 0 {
+			fmt.Println("No", "-", i, "-", time.Now().Format("15:04:05"), ";", "	")
+		}
+		line, _, err := buf.ReadLine()
+		if (err == io.EOF) {
+			print("is end")
+			return nil
+		}
+
+		line = []byte(strings.TrimSpace(string(line)))
+		handle(string(line))
+		i++
+	}
 }
