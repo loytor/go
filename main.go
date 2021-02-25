@@ -12,7 +12,7 @@ import (
 func main() {
 
 	// 生成随机文件前缀
-	fPrefix := "dmp/" + time.Now().Format("150405") + "-chiyt"
+	fPrefix := "dmp/" + "baohai-" + time.Now().Format("150405")
 
 	// 打开文件流
 	fIdfa, _ := os.OpenFile("./"+fPrefix+"-idfa.txt", os.O_RDWR|os.O_CREATE, 0766);
@@ -39,7 +39,7 @@ func main() {
 		}
 
 		// 匹配imei
-		mImei, _ := regexp.MatchString(`^[0-9]{15}$`, txt)
+		mImei, _ := regexp.MatchString(`^[\w\d]{15}$`, txt)
 		if mImei {
 			_, _ = fImei.WriteString(txt + "\n")
 		}
