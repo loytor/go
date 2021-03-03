@@ -22,21 +22,22 @@ func NChars(b string, n int) string {
 func PBar(lineI int, lineLen int) {
 	countFinish := NChars("#", int(lineI*100/lineLen))
 	countWait := NChars("-", int(100-lineI*100/lineLen))
-	fmt.Print("\r", countFinish, countWait, ":", lineI, ":")
+	print("\r", countFinish, countWait, ":", lineI, ":")
 }
 
 func Mimei(s string) bool {
-	b, _ := regexp.MatchString(`^[\w\d]{15}$`, s)
+	b, _ := regexp.MatchString(`^\w{15}$`, s)
 	return s != "NULL" && b
 }
 
 func Midfa(s string) bool {
-	b, _ := regexp.MatchString(`^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$`, s)
+	b, _ := regexp.MatchString(`^[A-Z\d]{8}-[A-Z\d]{4}-[A-Z\d]{4}-[A-Z\d]{4}-[A-Z\d]{12}$`, s)
 	return s != "NULL" && b
 }
 
 func Moaid(s string) bool {
-	return s != "NULL" && s != ""
+	b, _ := regexp.MatchString(`^[a-z\d]{8}-[a-z\d]{4}-[a-z\d]{4}-[a-z\d]{4}-[a-z\d]{12}$`, s)
+	return s != "NULL" && b
 }
 
 func ReadFile(filePath string, handle func(string)) error {
